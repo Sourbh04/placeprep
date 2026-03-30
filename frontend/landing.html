@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PREPLACE — AI-powered Resume Intelligence Platform | SMVDU TPO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #06080f;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00e5a0;
+    --accent2: #0057ff;
+    --accent3: #ff5c87;
+    --text: #f0f4ff;
+    --muted: #6b7a99;
+    --applicant: #00e5a0;
+    --recruiter: #4d9fff;
+    --admin: #ff5c87;
+    --smvdu-gold: #c8960c;
+    --smvdu-maroon: #7c1b1b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.4;
+  }
+
+  .orb {
+    position: fixed; border-radius: 50%;
+    filter: blur(90px); pointer-events: none; z-index: 0;
+    animation: float 8s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 500px; height: 500px; background: rgba(0,229,160,0.07); top: -150px; left: -100px; }
+  .orb-2 { width: 600px; height: 600px; background: rgba(77,159,255,0.06); bottom: -200px; right: -150px; animation-delay: -3s; }
+  .orb-3 { width: 300px; height: 300px; background: rgba(255,92,135,0.05); top: 40%; left: 50%; animation-delay: -5s; }
+
+  @keyframes float {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(20px,30px) scale(1.05); }
+  }
+
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; flex-direction: column;
+    background: rgba(6,8,15,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-main {
+    padding: 1.2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .header-nirf {
+    background: linear-gradient(90deg, rgba(200,150,12,0.12), rgba(124,27,27,0.08), rgba(200,150,12,0.12));
+    border-top: 1px solid rgba(200,150,12,0.2);
+    padding: 0.45rem 3rem;
+    display: flex; align-items: center; justify-content: center; gap: 2rem;
+    flex-wrap: wrap;
+    font-size: 0.7rem; color: var(--muted); letter-spacing: 0.04em;
+  }
+  .header-nirf-item { display: flex; align-items: center; gap: 0.45rem; }
+  .header-nirf-pill {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.62rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--smvdu-gold);
+    background: rgba(200,150,12,0.15);
+    border: 1px solid rgba(200,150,12,0.3);
+    padding: 0.15rem 0.55rem; border-radius: 100px;
+  }
+  .header-nirf strong { color: var(--text); font-weight: 600; }
+  .header-nirf .sep { color: rgba(255,255,255,0.15); }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.5rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo span { color: var(--accent3); -webkit-text-fill-color: var(--accent3); }
+
+  .nav-badge {
+    font-size: 0.7rem; font-weight: 500;
+    padding: 0.3rem 0.8rem; border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 12rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent);
+    border: 1px solid rgba(0,229,160,0.25);
+    padding: 0.4rem 1rem; border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.7s ease both;
+  }
+  .eyebrow::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800; line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  h1 .line1 { display: block; }
+  h1 .accent-word {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--muted); font-weight: 300;
+    max-width: 520px; line-height: 1.7;
+    margin-bottom: 4rem;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .roles-label {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .roles {
+    display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s 0.35s ease both;
+  }
+
+  .role-card {
+    position: relative; cursor: pointer;
+    width: 220px; padding: 2.2rem 1.8rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    text-align: left;
+    transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s ease, border-color 0.25s;
+    overflow: hidden;
+  }
+  .role-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 60% 0%, var(--card-color) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .role-card:hover { transform: translateY(-8px) scale(1.02); }
+  .role-card:hover::before { opacity: 0.08; }
+  .role-card:hover { border-color: var(--card-color); box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px var(--card-color); }
+  .role-card.applicant { --card-color: var(--applicant); }
+  .role-card.recruiter { --card-color: var(--recruiter); }
+  .role-card.admin     { --card-color: var(--admin); }
+
+  .role-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem; font-size: 1.4rem;
+    transition: transform 0.3s;
+  }
+  .role-card:hover .role-icon { transform: rotate(-5deg) scale(1.1); }
+
+  .role-tag {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--card-color);
+    margin-bottom: 0.4rem;
+  }
+  .role-title {
+    font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .role-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+  .role-arrow {
+    position: absolute; bottom: 1.5rem; right: 1.5rem;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; color: var(--card-color);
+    transition: transform 0.3s, background 0.3s;
+  }
+  .role-card:hover .role-arrow { transform: translate(3px,-3px); background: var(--card-color); color: var(--bg); }
+
+  /* ─── TICKER ─── */
+  .ticker-wrap {
+    position: relative; z-index: 1;
+    overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 0.8rem 0; background: rgba(255,255,255,0.015);
+  }
+  .ticker-track {
+    display: flex; gap: 3rem; width: max-content;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker-item {
+    white-space: nowrap; font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .ticker-item span { color: var(--accent); }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* ─── SMVDU TPO SECTION ─── */
+  .smvdu-section {
+    position: relative; z-index: 1;
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .smvdu-header {
+    display: flex; align-items: center; gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 2rem 2.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+  .smvdu-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(200,150,12,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .smvdu-header::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--smvdu-gold), transparent);
+  }
+
+  .smvdu-logo-space {
+    width: 80px; height: 80px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(200,150,12,0.15), rgba(124,27,27,0.15));
+    border: 1px solid rgba(200,150,12,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(200,150,12,0.1);
+  }
+
+  .smvdu-header-text { flex: 1; }
+  .smvdu-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--smvdu-gold);
+    margin-bottom: 0.5rem;
+  }
+  .smvdu-badge::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--smvdu-gold);
+  }
+  .smvdu-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #f0d080, #c8960c);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.4rem;
+  }
+  .smvdu-subtitle {
+    font-size: 0.82rem; color: var(--muted); line-height: 1.5;
+  }
+  .smvdu-nirf {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem;
+    flex-shrink: 0;
+  }
+  .nirf-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--smvdu-gold);
+    background: rgba(200,150,12,0.1);
+    border: 1px solid rgba(200,150,12,0.25);
+    padding: 0.25rem 0.7rem; border-radius: 100px;
+  }
+  .nirf-rank {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem; font-weight: 800;
+    background: linear-gradient(135deg, #f0d080, #c8960c);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .nirf-label { font-size: 0.62rem; color: var(--muted); text-align: right; }
+
+  .tpo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.7s 0.5s ease both;
+  }
+
+  .tpo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1.8rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .tpo-card:hover { border-color: var(--card-accent); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.35); }
+  .tpo-card.gold { --card-accent: rgba(200,150,12,0.5); }
+  .tpo-card.green { --card-accent: rgba(0,229,160,0.4); }
+  .tpo-card.blue  { --card-accent: rgba(77,159,255,0.4); }
+  .tpo-card.red   { --card-accent: rgba(255,92,135,0.4); }
+
+  .tpo-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--card-accent);
+    border-radius: 18px 18px 0 0;
+  }
+
+  .tpo-card-icon {
+    width: 42px; height: 42px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .tpo-card-label {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem;
+  }
+  .tpo-card-title {
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    margin-bottom: 0.4rem; line-height: 1.3;
+  }
+  .tpo-card-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
+
+  .tpo-contact-item {
+    display: flex; align-items: center; gap: 0.7rem;
+    font-size: 0.82rem; color: var(--text);
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .tpo-contact-item:first-of-type { border-top: none; padding-top: 0; }
+  .tpo-contact-item .icon { font-size: 0.9rem; width: 20px; text-align: center; color: var(--muted); }
+  .tpo-contact-item a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  .tpo-contact-item a:hover { color: var(--accent); }
+
+  /* Coordinators section */
+  .coordinators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    animation: fadeUp 0.7s 0.6s ease both;
+  }
+
+  .coord-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    display: flex; align-items: center; gap: 1rem;
+    transition: border-color 0.3s, transform 0.25s;
+  }
+  .coord-card:hover { border-color: rgba(0,229,160,0.3); transform: translateX(4px); }
+  .coord-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0,229,160,0.2), rgba(77,159,255,0.2));
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .coord-name { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; }
+  .coord-role { font-size: 0.72rem; color: var(--accent); margin-top: 0.15rem; }
+  .coord-school { font-size: 0.68rem; color: var(--muted); margin-top: 0.1rem; line-height: 1.3; }
+  .coord-email { font-size: 0.68rem; color: var(--accent); margin-top: 0.2rem; }
+  .coord-email a { color: inherit; text-decoration: none; }
+  .coord-email a:hover { text-decoration: underline; }
+
+  /* NIRF top banner */
+  .nirf-topbar {
+    position: relative; z-index: 2;
+    background: linear-gradient(90deg, rgba(200,150,12,0.12), rgba(124,27,27,0.08), rgba(200,150,12,0.12));
+    border-bottom: 1px solid rgba(200,150,12,0.25);
+    padding: 0.55rem 3rem;
+    display: flex; align-items: center; justify-content: center; gap: 2rem;
+    flex-wrap: wrap;
+    font-size: 0.72rem; color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .nirf-topbar-item {
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nirf-topbar-pill {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.68rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--smvdu-gold);
+    background: rgba(200,150,12,0.15);
+    border: 1px solid rgba(200,150,12,0.3);
+    padding: 0.18rem 0.65rem; border-radius: 100px;
+  }
+  .nirf-topbar strong { color: var(--text); font-weight: 600; }
+  .nirf-topbar .sep { color: rgba(255,255,255,0.12); }
+
+  /* expanded coord card for sub-entries */
+  .coord-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
+  }
+  .coord-group:hover { border-color: rgba(0,229,160,0.3); transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.3); }
+  .coord-group-header {
+    display: flex; align-items: center; gap: 0.9rem;
+    padding: 1rem 1.4rem;
+    background: rgba(255,255,255,0.025);
+    border-bottom: 1px solid var(--border);
+  }
+  .coord-group-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0,229,160,0.15), rgba(77,159,255,0.15));
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .coord-group-school { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; }
+  .coord-group-label { font-size: 0.68rem; color: var(--accent); margin-top: 0.1rem; }
+  .coord-entry {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.85rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .coord-entry:last-child { border-bottom: none; }
+  .coord-entry-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0,229,160,0.18), rgba(77,159,255,0.18));
+    border: 1px solid rgba(255,255,255,0.09);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+  }
+  .coord-entry-name { font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; }
+  .coord-entry-email { font-size: 0.68rem; color: var(--accent); margin-top: 0.1rem; }
+  .coord-entry-email a { color: inherit; text-decoration: none; }
+  .coord-entry-email a:hover { text-decoration: underline; }
+  .coord-entry-tbd { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+
+  .coordinators-grid-new {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    animation: fadeUp 0.7s 0.6s ease both;
+  }
+
+  .section-divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 2.5rem 0 1.8rem;
+  }
+  .section-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .section-divider-label {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* Address strip */
+  .address-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1.8rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.7s 0.7s ease both;
+  }
+  .address-strip-item {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-size: 0.8rem; color: var(--muted);
+  }
+  .address-strip-item .icon { font-size: 1rem; }
+  .address-strip-item strong { color: var(--text); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(6,8,15,0.85); backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2.5rem;
+    width: 100%; max-width: 440px;
+    position: relative;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.4s cubic-bezier(.22,.68,0,1.1);
+  }
+  .modal-overlay.active .modal { transform: translateY(0) scale(1); }
+
+  .modal-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+  .modal-icon { width: 46px; height: 46px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; }
+  .modal-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+
+  .close-btn {
+    position: absolute; top: 1.2rem; right: 1.2rem;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: none; cursor: pointer;
+    color: var(--muted); font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .close-btn:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label { display: block; font-size: 0.75rem; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 0.5rem; text-transform: uppercase; }
+  .form-input {
+    width: 100%; padding: 0.8rem 1.1rem;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+    transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+  }
+  .form-input::placeholder { color: var(--muted); opacity: 0.5; }
+  .form-input:focus { border-color: var(--modal-color); box-shadow: 0 0 0 3px rgba(var(--modal-rgb), 0.1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .submit-btn {
+    width: 100%; padding: 1rem;
+    background: var(--modal-color); border: none;
+    border-radius: 12px; cursor: pointer;
+    font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+    color: var(--bg); letter-spacing: 0.03em;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .submit-btn::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); transform: translateX(-100%); transition: transform 0.4s ease; }
+  .submit-btn:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .submit-btn:hover::after { transform: translateX(100%); }
+
+  .modal-switch { text-align: center; margin-top: 1.2rem; font-size: 0.82rem; color: var(--muted); }
+  .modal-switch a { color: var(--modal-color); cursor: pointer; text-decoration: none; font-weight: 500; }
+  .modal-switch a:hover { text-decoration: underline; }
+
+  .modal.applicant-modal { --modal-color: var(--applicant); --modal-rgb: 0,229,160; }
+  .modal.recruiter-modal { --modal-color: var(--recruiter); --modal-rgb: 77,159,255; }
+  .modal.admin-modal     { --modal-color: var(--admin);     --modal-rgb: 255,92,135; }
+  .modal-icon.applicant-icon { background: rgba(0,229,160,0.12); }
+  .modal-icon.recruiter-icon { background: rgba(77,159,255,0.12); }
+  .modal-icon.admin-icon     { background: rgba(255,92,135,0.12); }
+
+  .tab-switcher { display: flex; gap: 0.4rem; background: rgba(255,255,255,0.04); padding: 0.3rem; border-radius: 10px; margin-bottom: 1.8rem; }
+  .tab-btn { flex: 1; padding: 0.55rem; border: none; cursor: pointer; background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; border-radius: 7px; transition: background 0.2s, color 0.2s; }
+  .tab-btn.active { background: rgba(255,255,255,0.08); color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+    padding: 1rem 1.5rem; border-radius: 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.8rem;
+    font-size: 0.88rem; color: var(--text);
+    transform: translateY(100px); opacity: 0;
+    transition: transform 0.4s cubic-bezier(.22,.68,0,1.2), opacity 0.4s;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Footer */
+  .footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+  #particle-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.35; }
+
+  @media(max-width: 768px) {
+    header { padding: 1rem 1.5rem; }
+    .roles { flex-direction: column; align-items: center; }
+    .role-card { width: 100%; max-width: 320px; }
+    .form-row { grid-template-columns: 1fr; }
+    .modal { margin: 1rem; }
+    .smvdu-header { flex-direction: column; text-align: center; }
+    .smvdu-nirf { align-items: center; }
+    .address-strip { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<header>
+  <div class="header-main">
+    <div class="logo">PRE<span>PLACE</span></div>
+    <div class="nav-badge">SMVDU Edition</div>
+  </div>
+  <div class="header-nirf">
+    <div class="header-nirf-item">
+      <span class="header-nirf-pill">SMVDU</span>
+      <strong>Shri Mata Vaishno Devi University</strong>
+    </div>
+    <span class="sep">|</span>
+    <div class="header-nirf-item">
+      <span>🏆</span>
+      <span><strong>NIRF 2025:</strong> #101-150 Engineering &nbsp;·&nbsp; #26 Architecture &nbsp;·&nbsp; #151-200 Universities</span>
+    </div>
+    <span class="sep">|</span>
+    <div class="header-nirf-item">
+      <span>📍</span>
+      <span>Kakryal, Katra, J&amp;K &nbsp;·&nbsp; Est. 1999 &nbsp;·&nbsp; UGC 2(f) &amp; 12(B)</span>
+    </div>
+    <span class="sep">|</span>
+    <div class="header-nirf-item">
+      <span>🌐</span>
+      <a href="https://smvdu.ac.in" target="_blank" style="color:var(--smvdu-gold);text-decoration:none;font-weight:600;">www.smvdu.ac.in</a>
+    </div>
+  </div>
+</header>
+
+<div class="ticker-wrap" style="margin-top: calc(var(--header-h, 94px))">
+  <div class="ticker-track">
+    <div class="ticker-item">🤖 AI-Powered Analysis <span>•</span></div>
+    <div class="ticker-item">📄 Smart Resume Parsing <span>•</span></div>
+    <div class="ticker-item">🎯 Role Matching <span>•</span></div>
+    <div class="ticker-item">📊 Resume Score <span>•</span></div>
+    <div class="ticker-item">🔗 Pinecone Embeddings <span>•</span></div>
+    <div class="ticker-item">✨ Gemini AI <span>•</span></div>
+    <div class="ticker-item">💼 SMVDU TPO Powered <span>•</span></div>
+    <div class="ticker-item">🤖 AI-Powered Analysis <span>•</span></div>
+    <div class="ticker-item">📄 Smart Resume Parsing <span>•</span></div>
+    <div class="ticker-item">🎯 Role Matching <span>•</span></div>
+    <div class="ticker-item">📊 Resume Score <span>•</span></div>
+    <div class="ticker-item">🔗 Pinecone Embeddings <span>•</span></div>
+    <div class="ticker-item">✨ Gemini AI <span>•</span></div>
+    <div class="ticker-item">💼 SMVDU TPO Powered <span>•</span></div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="eyebrow">AI-powered Resume Intelligence Platform</div>
+
+  <h1>
+    <span class="line1">Land Your</span>
+    <span class="accent-word">Dream Role</span><br>
+    <span>With Intelligence</span>
+  </h1>
+
+  <p class="tagline">
+    PREPLACE uses cutting-edge AI to analyze, score, and match resumes —
+    empowering SMVDU students to shine and recruiters to hire smarter.
+  </p>
+
+  <div class="roles-label">Choose your role to get started</div>
+
+  <div class="roles">
+    <div class="role-card applicant" onclick="openModal('applicant')">
+      <div class="role-icon">🎓</div>
+      <div class="role-tag">Applicant</div>
+      <div class="role-title">Job Seeker</div>
+      <div class="role-desc">Upload your resume, get AI-powered feedback, and discover matching roles.</div>
+      <div class="role-arrow">→</div>
+    </div>
+    <div class="role-card recruiter" onclick="openModal('recruiter')">
+      <div class="role-icon">🏢</div>
+      <div class="role-tag">Recruiter</div>
+      <div class="role-title">Hiring Manager</div>
+      <div class="role-desc">Post roles, filter smart-ranked applicants, and hire with confidence.</div>
+      <div class="role-arrow">→</div>
+    </div>
+    <div class="role-card admin" onclick="openModal('admin')">
+      <div class="role-icon">👑</div>
+      <div class="role-tag">Admin</div>
+      <div class="role-title">Platform Admin</div>
+      <div class="role-desc">Manage recruiters, oversee applicants, and control the full platform.</div>
+      <div class="role-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SMVDU TPO SECTION ═══════════════════════════ -->
+<section class="smvdu-section">
+
+  <!-- University Header -->
+  <div class="smvdu-header">
+    <div class="smvdu-logo-space" title="SMVDU Logo">🏛️</div>
+    <div class="smvdu-header-text">
+      <div class="smvdu-badge">Training & Placement Office</div>
+      <div class="smvdu-title">Shri Mata Vaishno Devi University</div>
+      <div class="smvdu-subtitle">Kakryal, Katra — Reasi District, Jammu &amp; Kashmir — 182320 | Established 1999</div>
+    </div>
+    <div class="smvdu-nirf">
+      <div class="nirf-badge">NIRF 2025</div>
+      <div class="nirf-rank">#101‑150</div>
+      <div class="nirf-label">Engineering Ranking</div>
+    </div>
+  </div>
+
+  <!-- TPO Contact Cards -->
+  <div class="tpo-grid">
+
+    <!-- TPO Officer -->
+    <div class="tpo-card gold">
+      <div class="tpo-card-icon">👨‍💼</div>
+      <div class="tpo-card-label">Placement Officer</div>
+      <div class="tpo-card-title">B K Bhatia</div>
+      <div class="tpo-card-sub">Training &amp; Placement Officer, SMVDU</div>
+      <div class="tpo-contact-item">
+        <span class="icon">📧</span>
+        <a href="mailto:bk.bhatia@smvdu.ac.in">bk.bhatia@smvdu.ac.in</a>
+      </div>
+      <div class="tpo-contact-item">
+        <span class="icon">📱</span>
+        <a href="tel:+919419164533">+91-94191-64533</a>
+      </div>
+      <div class="tpo-contact-item">
+        <span class="icon">🌐</span>
+        <a href="https://smvdu.ac.in/placements/" target="_blank">smvdu.ac.in/placements</a>
+      </div>
+    </div>
+
+    <!-- T&P Cell -->
+    <div class="tpo-card blue">
+      <div class="tpo-card-icon">🏫</div>
+      <div class="tpo-card-label">Training &amp; Placement Cell</div>
+      <div class="tpo-card-title">T&amp;P Cell, SMVDU</div>
+      <div class="tpo-card-sub">Village Kakryal, Katra — Pin 182 320, J&amp;K</div>
+      <div class="tpo-contact-item">
+        <span class="icon">📞</span>
+        <span>1991-285524 (08 Lines)</span>
+      </div>
+      <div class="tpo-contact-item">
+        <span class="icon">📱</span>
+        <a href="tel:+919419907312">9419907312 &nbsp;Ext: 2756</a>
+      </div>
+      <div class="tpo-contact-item">
+        <span class="icon">📧</span>
+        <a href="mailto:tpo@smvdu.ac.in">tpo@smvdu.ac.in</a>
+      </div>
+      <div class="tpo-contact-item">
+        <span class="icon">🌐</span>
+        <a href="https://www.smvdu.ac.in" target="_blank">www.smvdu.ac.in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Coordinators -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Student Placement Coordinators</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="coordinators-grid-new">
+
+    <!-- CSE -->
+    <div class="coord-group">
+      <div class="coord-group-header">
+        <div class="coord-group-icon">💻</div>
+        <div>
+          <div class="coord-group-school">School of CSE</div>
+          <div class="coord-group-label">Software &amp; IT Drives</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👨‍💻</div>
+        <div>
+          <div class="coord-entry-name">AMAN VERMA</div>
+          <div class="coord-entry-email"><a href="mailto:23bcs012@smvdu.ac.in">23bcs012@smvdu.ac.in</a></div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👨‍💻</div>
+        <div>
+          <div class="coord-entry-name">RAHUL RANJAN</div>
+          <div class="coord-entry-email"><a href="mailto:23bcs072@smvdu.ac.in">23bcs072@smvdu.ac.in</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECE -->
+    <div class="coord-group">
+      <div class="coord-group-header">
+        <div class="coord-group-icon">📡</div>
+        <div>
+          <div class="coord-group-school">School of ECE</div>
+          <div class="coord-group-label">Electronics &amp; Communication Drives</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👤</div>
+        <div>
+          <div class="coord-entry-name">—</div>
+          <div class="coord-entry-tbd">To be updated</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👤</div>
+        <div>
+          <div class="coord-entry-name">—</div>
+          <div class="coord-entry-tbd">To be updated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ME / CE / EE -->
+    <div class="coord-group">
+      <div class="coord-group-header">
+        <div class="coord-group-icon">⚙️</div>
+        <div>
+          <div class="coord-group-school">School of ME / CE / EE</div>
+          <div class="coord-group-label">Core Engineering Drives</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👤</div>
+        <div>
+          <div class="coord-entry-name">—</div>
+          <div class="coord-entry-tbd">To be updated</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👤</div>
+        <div>
+          <div class="coord-entry-name">—</div>
+          <div class="coord-entry-tbd">To be updated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Business / Economics -->
+    <div class="coord-group">
+      <div class="coord-group-header">
+        <div class="coord-group-icon">💼</div>
+        <div>
+          <div class="coord-group-school">School of Business / Economics</div>
+          <div class="coord-group-label">MBA &amp; Management Drives</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👤</div>
+        <div>
+          <div class="coord-entry-name">—</div>
+          <div class="coord-entry-tbd">To be updated</div>
+        </div>
+      </div>
+      <div class="coord-entry">
+        <div class="coord-entry-avatar">👤</div>
+        <div>
+          <div class="coord-entry-name">—</div>
+          <div class="coord-entry-tbd">To be updated</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Address Strip -->
+  <div class="address-strip">
+    <div class="address-strip-item">
+      <span class="icon">🌐</span>
+      <span><strong>Website:</strong> <a href="https://smvdu.ac.in" target="_blank" style="color:var(--accent);text-decoration:none;">www.smvdu.ac.in</a></span>
+    </div>
+    <div class="address-strip-item">
+      <span class="icon">📞</span>
+      <span><strong>University:</strong> +91-1991-285524</span>
+    </div>
+    <div class="address-strip-item">
+      <span class="icon">📧</span>
+      <span><strong>TPO Email:</strong> <a href="mailto:tpo@smvdu.ac.in" style="color:var(--accent);text-decoration:none;">tpo@smvdu.ac.in</a></span>
+    </div>
+    <div class="address-strip-item">
+      <span class="icon">📍</span>
+      <span><strong>Location:</strong> Kakryal, Katra, J&amp;K – 182320</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ APPLICANT MODAL ═══════════════════════════ -->
+<div class="modal-overlay" id="applicant-overlay" onclick="closeOnOverlay(event,'applicant')">
+  <div class="modal applicant-modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal('applicant')">✕</button>
+    <div class="modal-header">
+      <div class="modal-icon applicant-icon">🎓</div>
+      <div>
+        <div class="modal-title">Applicant Portal</div>
+        <div class="modal-sub">Sign in or create your SMVDU account</div>
+      </div>
+    </div>
+    <div class="tab-switcher">
+      <button class="tab-btn active" onclick="switchTab('applicant','login',this)">Login</button>
+      <button class="tab-btn" onclick="switchTab('applicant','signup',this)">Register</button>
+    </div>
+    <div class="tab-panel active" id="applicant-login">
+      <div class="form-group">
+        <label class="form-label">SMVDU Email</label>
+        <input class="form-input" type="email" placeholder="rollno@smvdu.ac.in"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••"/>
+      </div>
+      <button class="submit-btn" onclick="handleLogin('applicant')">Sign In →</button>
+      <div class="modal-switch">No account? <a onclick="switchTab('applicant','signup', document.querySelectorAll('#applicant-overlay .tab-btn')[1])">Register here</a></div>
+    </div>
+    <div class="tab-panel" id="applicant-signup">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" placeholder="John Doe"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Roll Number</label>
+          <input class="form-input" type="text" placeholder="21CSE001"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SMVDU Email</label>
+        <input class="form-input" type="email" placeholder="rollno@smvdu.ac.in"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Degree / Branch</label>
+          <input class="form-input" type="text" placeholder="B.Tech CSE"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Year of Study</label>
+          <input class="form-input" type="text" placeholder="3rd Year"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Number</label>
+        <input class="form-input" type="tel" placeholder="+91 98765 43210"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••"/>
+      </div>
+      <button class="submit-btn" onclick="handleRegister('applicant')">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ RECRUITER MODAL ═══════════════════════════ -->
+<div class="modal-overlay" id="recruiter-overlay" onclick="closeOnOverlay(event,'recruiter')">
+  <div class="modal recruiter-modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal('recruiter')">✕</button>
+    <div class="modal-header">
+      <div class="modal-icon recruiter-icon">🏢</div>
+      <div>
+        <div class="modal-title">Recruiter Portal</div>
+        <div class="modal-sub">Hiring manager access</div>
+      </div>
+    </div>
+    <div class="tab-switcher">
+      <button class="tab-btn active" onclick="switchTab('recruiter','login',this)">Login</button>
+      <button class="tab-btn" onclick="switchTab('recruiter','signup',this)">Register</button>
+    </div>
+    <div class="tab-panel active" id="recruiter-login">
+      <div class="form-group">
+        <label class="form-label">Work Email</label>
+        <input class="form-input" type="email" placeholder="recruiter@company.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••"/>
+      </div>
+      <button class="submit-btn" onclick="handleLogin('recruiter')">Sign In →</button>
+    </div>
+    <div class="tab-panel" id="recruiter-signup">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Company Name</label>
+          <input class="form-input" type="text" placeholder="Acme Corp"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input class="form-input" type="text" placeholder="Jane Smith"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Work Email</label>
+        <input class="form-input" type="email" placeholder="recruiter@company.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role(s) Hiring For</label>
+        <input class="form-input" type="text" placeholder="e.g. SDE, Product Manager"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••"/>
+      </div>
+      <button class="submit-btn" onclick="handleRegister('recruiter')">Submit for Approval →</button>
+      <div class="modal-switch" style="font-size:0.75rem; color:var(--muted); margin-top:0.8rem">
+        ⏳ Admin approval required before accessing your dashboard
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ADMIN MODAL ═══════════════════════════ -->
+<div class="modal-overlay" id="admin-overlay" onclick="closeOnOverlay(event,'admin')">
+  <div class="modal admin-modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal('admin')">✕</button>
+    <div class="modal-header">
+      <div class="modal-icon admin-icon">👑</div>
+      <div>
+        <div class="modal-title">Admin Access</div>
+        <div class="modal-sub">Restricted — authorized personnel only</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Admin ID</label>
+      <input class="form-input" type="text" placeholder="admin@smvdu.ac.in"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Passphrase</label>
+      <input class="form-input" type="password" placeholder="••••••••"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">2FA Code (optional)</label>
+      <input class="form-input" type="text" placeholder="6-digit code"/>
+    </div>
+    <button class="submit-btn" onclick="handleLogin('admin')">Access Panel →</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-dot" id="toast-dot"></div>
+  <span id="toast-msg"></span>
+</div>
+
+<footer class="footer">
+  <p>© 2026 PREPLACE — Built for <a href="https://smvdu.ac.in" target="_blank">SMVDU</a> by SMVDU Students &nbsp;|&nbsp; Powered by Gemini AI &nbsp;|&nbsp; <a href="https://smvdu.ac.in/placements/" target="_blank">TPO Portal</a></p>
+</footer>
+
+<script>
+// Adjust ticker offset to match actual header height
+function setHeaderHeight() {
+  const h = document.querySelector('header').offsetHeight;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+setHeaderHeight();
+window.addEventListener('resize', setHeaderHeight);
+
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [], W, H;
+
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W; this.y = Math.random() * H;
+    this.r = Math.random() * 1.5 + 0.3;
+    this.s = Math.random() * 0.3 + 0.05;
+    this.op = Math.random() * 0.4 + 0.1;
+    this.color = ['#00e5a0','#4d9fff','#ff5c87','#c8960c'][Math.floor(Math.random()*4)];
+  }
+  update() { this.y -= this.s; if (this.y < -10) { this.reset(); this.y = H + 10; } }
+  draw() {
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.color; ctx.globalAlpha = this.op; ctx.fill(); ctx.globalAlpha = 1;
+  }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+function animate() { ctx.clearRect(0,0,W,H); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+animate();
+
+function openModal(role) { document.getElementById(role+'-overlay').classList.add('active'); document.body.style.overflow='hidden'; }
+function closeModal(role) { document.getElementById(role+'-overlay').classList.remove('active'); document.body.style.overflow=''; }
+function closeOnOverlay(e,role) { if(e.target===document.getElementById(role+'-overlay')) closeModal(role); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') ['applicant','recruiter','admin'].forEach(r=>closeModal(r)); });
+
+function switchTab(role,tab,btn) {
+  document.querySelectorAll(`#${role}-overlay .tab-panel`).forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll(`#${role}-overlay .tab-btn`).forEach(b=>b.classList.remove('active'));
+  document.getElementById(`${role}-${tab}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showToast(msg,color) {
+  const t=document.getElementById('toast'); const d=document.getElementById('toast-dot'); const m=document.getElementById('toast-msg');
+  m.textContent=msg; d.style.background=color||'#00e5a0'; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function handleLogin(role) {
+  const colors={applicant:'#00e5a0',recruiter:'#4d9fff',admin:'#ff5c87'};
+  const msgs={applicant:'✅ Welcome back! Redirecting to your dashboard…',recruiter:'✅ Logged in! Loading recruiter panel…',admin:'🔐 Admin authenticated. Loading control panel…'};
+  closeModal(role); showToast(msgs[role],colors[role]);
+}
+function handleRegister(role) {
+  const colors={applicant:'#00e5a0',recruiter:'#4d9fff'};
+  const msgs={applicant:'🎉 Account created! Redirecting to dashboard…',recruiter:'📬 Request submitted! Awaiting admin approval.'};
+  closeModal(role); showToast(msgs[role],colors[role]);
+}
+</script>
+</body>
+</html>

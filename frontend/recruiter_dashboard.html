@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PREPLACE — Recruiter Dashboard | SMVDU</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #06080f;
+            --surface: #0d1117;
+            --surface2: #131920;
+            --border: rgba(255, 255, 255, 0.07);
+            --accent: #4d9fff;
+            --accent-g: #00e5a0;
+            --accent3: #ff5c87;
+            --text: #f0f4ff;
+            --muted: #6b7a99;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.4;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(77, 159, 255, 0.06);
+            top: -100px;
+            right: -80px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 229, 160, 0.04);
+            bottom: -150px;
+            left: -100px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(6, 8, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #4d9fff, #0057ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo span {
+            color: #ff5c87;
+            -webkit-text-fill-color: #ff5c87;
+        }
+
+        .signout-btn {
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .signout-btn:hover {
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .profile-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 2rem 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 0% 0%, rgba(77, 159, 255, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .profile-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), #0057ff, transparent);
+        }
+
+        .profile-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(77, 159, 255, 0.2), rgba(0, 87, 255, 0.2));
+            border: 2px solid rgba(77, 159, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-company {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .profile-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.7rem;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .profile-tag.blue {
+            background: rgba(77, 159, 255, 0.08);
+            border-color: rgba(77, 159, 255, 0.2);
+            color: var(--accent);
+        }
+
+        .profile-tag.green {
+            background: rgba(0, 229, 160, 0.08);
+            border-color: rgba(0, 229, 160, 0.2);
+            color: var(--accent-g);
+        }
+
+        .profile-tag.red {
+            background: rgba(255, 92, 135, 0.08);
+            border-color: rgba(255, 92, 135, 0.2);
+            color: var(--accent3);
+        }
+
+        .stat-badge {
+            text-align: center;
+            flex-shrink: 0;
+            padding: 0.7rem 1.2rem;
+            background: rgba(0, 229, 160, 0.07);
+            border: 1px solid rgba(0, 229, 160, 0.2);
+            border-radius: 14px;
+        }
+
+        .stat-badge .pb-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-badge .pb-val {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent-g);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.35rem;
+            margin-bottom: 2rem;
+            animation: fadeUp 0.5s 0.08s ease both;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.65rem 0.5rem;
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--muted);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+        }
+
+        .tab.active {
+            background: rgba(77, 159, 255, 0.1);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .panel {
+            display: none;
+            animation: fadeUp 0.35s ease both;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* Applicants */
+        .filters-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+            align-items: center;
+        }
+
+        .fchip {
+            font-size: 0.72rem;
+            font-weight: 500;
+            padding: 0.35rem 0.9rem;
+            border-radius: 100px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .fchip:hover,
+        .fchip.active {
+            background: rgba(77, 159, 255, 0.08);
+            border-color: rgba(77, 159, 255, 0.25);
+            color: var(--accent);
+        }
+
+        .search-input {
+            margin-left: auto;
+            padding: 0.4rem 0.9rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 200px;
+        }
+
+        .search-input::placeholder {
+            color: var(--muted);
+            opacity: 0.6;
+        }
+
+        .search-input:focus {
+            border-color: rgba(77, 159, 255, 0.35);
+        }
+
+        .app-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .app-row {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+        }
+
+        .app-row:hover {
+            border-color: rgba(77, 159, 255, 0.25);
+            transform: translateX(4px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(77, 159, 255, 0.2), rgba(0, 229, 160, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .app-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .app-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .app-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.15rem;
+        }
+
+        .app-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .atag {
+            font-size: 0.62rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .app-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.45rem;
+            flex-shrink: 0;
+        }
+
+        .app-score {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .app-score-bar {
+            width: 70px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .app-score-fill {
+            height: 100%;
+            border-radius: 100px;
+        }
+
+        .app-role-pill {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            background: rgba(77, 159, 255, 0.1);
+            border: 1px solid rgba(77, 159, 255, 0.2);
+            color: var(--accent);
+        }
+
+        .view-btn {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            background: rgba(77, 159, 255, 0.08);
+            border: 1px solid rgba(77, 159, 255, 0.2);
+            border-radius: 7px;
+            color: var(--accent);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .view-btn:hover {
+            background: rgba(77, 159, 255, 0.18);
+        }
+
+        /* Post Job */
+        .post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 2rem 2.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), #0057ff);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .form-group.full {
+            grid-column: 1/-1;
+        }
+
+        .form-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--muted);
+            opacity: 0.5;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: rgba(77, 159, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(77, 159, 255, 0.08);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7a99' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+        }
+
+        .form-select option {
+            background: var(--surface2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+        }
+
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.25rem 0.65rem;
+            border-radius: 100px;
+            background: rgba(77, 159, 255, 0.1);
+            border: 1px solid rgba(77, 159, 255, 0.2);
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .skill-tag .rm {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
+        .skill-tag:hover .rm {
+            color: var(--accent3);
+        }
+
+        .skill-input-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        .skill-add-btn {
+            padding: 0.65rem 1rem;
+            background: rgba(77, 159, 255, 0.08);
+            border: 1px solid rgba(77, 159, 255, 0.2);
+            border-radius: 10px;
+            color: var(--accent);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .skill-add-btn:hover {
+            background: rgba(77, 159, 255, 0.18);
+        }
+
+        .post-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, var(--accent), #0057ff);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .post-btn:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(77, 159, 255, 0.2);
+        }
+
+        .post-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .form-error {
+            font-size: 0.78rem;
+            color: var(--accent3);
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        /* Listings */
+        .listings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .listing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.3rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+        }
+
+        .listing-card:hover {
+            border-color: rgba(77, 159, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+        }
+
+        .listing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent);
+        }
+
+        .listing-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .listing-role {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+        }
+
+        .listing-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .listing-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .listing-status {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.7rem;
+            border-radius: 100px;
+        }
+
+        .listing-status.active {
+            background: rgba(0, 229, 160, 0.1);
+            border: 1px solid rgba(0, 229, 160, 0.2);
+            color: var(--accent-g);
+        }
+
+        .listing-status.closed {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .listing-apps {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .listing-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.8rem;
+        }
+
+        .ltag {
+            font-size: 0.62rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .listing-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.9rem;
+        }
+
+        .la-btn {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.35rem 0.8rem;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .la-btn.blue {
+            background: rgba(77, 159, 255, 0.08);
+            border: 1px solid rgba(77, 159, 255, 0.2);
+            color: var(--accent);
+        }
+
+        .la-btn.blue:hover {
+            background: rgba(77, 159, 255, 0.18);
+        }
+
+        .la-btn.red {
+            background: rgba(255, 92, 135, 0.08);
+            border: 1px solid rgba(255, 92, 135, 0.2);
+            color: var(--accent3);
+        }
+
+        .la-btn.red:hover {
+            background: rgba(255, 92, 135, 0.18);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--muted);
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .empty-txt {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .api-error {
+            background: rgba(255, 92, 135, 0.08);
+            border: 1px solid rgba(255, 92, 135, 0.2);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 0.82rem;
+            color: var(--accent3);
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .api-error.show {
+            display: block;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 300;
+            padding: 0.85rem 1.3rem;
+            border-radius: 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.84rem;
+            color: var(--text);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: transform 0.35s cubic-bezier(.22, .68, 0, 1.2), opacity 0.35s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .tdot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(6, 8, 15, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            transform: translateY(24px) scale(0.97);
+            transition: transform 0.35s cubic-bezier(.22, .68, 0, 1.1);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-row .form-group {
+            flex: 1;
+        }
+
+        .modal-section {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin: 1rem 0 0.5rem;
+        }
+
+        .modal-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .modal-tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.25rem 0.65rem;
+            border-radius: 100px;
+            background: rgba(77, 159, 255, 0.1);
+            border: 1px solid rgba(77, 159, 255, 0.2);
+            color: var(--accent);
+        }
+
+        @media(max-width:640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-right {
+                display: none;
+            }
+
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-meta {
+                justify-content: center;
+            }
+
+            .search-input {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <header>
+        <div class="logo">PRE<span>PLACE</span></div>
+        <div style="display:flex;align-items:center;gap:0.8rem;">
+            <span id="header-company" style="font-size:0.82rem;color:var(--muted);"></span>
+            <button class="signout-btn" onclick="signOut()">Sign Out</button>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <!-- PROFILE CARD -->
+        <div class="profile-card">
+            <div class="profile-avatar">🏢</div>
+            <div class="profile-info">
+                <div class="profile-name" id="p-company">Loading…</div>
+                <div class="profile-company" id="p-recruiter"></div>
+                <div class="profile-meta">
+                    <span class="profile-tag blue">Recruiter</span>
+                    <span class="profile-tag" id="p-roles-hiring"></span>
+                    <span class="profile-tag green" id="p-status">Approved</span>
+                </div>
+            </div>
+            <div style="display:flex;gap:0.8rem;flex-shrink:0;">
+                <div class="stat-badge">
+                    <div class="pb-label">Listings</div>
+                    <div class="pb-val" id="badge-listings">—</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="pb-label">Applicants</div>
+                    <div class="pb-val" id="badge-apps">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" id="tab-applicants" onclick="switchTab('applicants',this)">👥 Applicants</button>
+            <button class="tab" id="tab-post" onclick="switchTab('post',this)">➕ Post a Job</button>
+            <button class="tab" id="tab-listings" onclick="switchTab('listings',this)">📋 My Listings</button>
+        </div>
+
+        <!-- APPLICANTS PANEL -->
+        <div class="panel active" id="panel-applicants">
+            <div class="api-error" id="apps-error"></div>
+            <div class="filters-row">
+                <div class="fchip active" onclick="filterApps('all',this)">All</div>
+                <div class="fchip" onclick="filterApps('sde',this)">SDE</div>
+                <div class="fchip" onclick="filterApps('data',this)">Data</div>
+                <div class="fchip" onclick="filterApps('product',this)">Product</div>
+                <input class="search-input" id="app-search" placeholder="🔍  Search by name…" oninput="renderApps()" />
+            </div>
+            <div class="app-list" id="app-list">
+                <div class="app-row" style="opacity:0.5;">
+                    <div class="app-avatar skeleton" style="height:42px;"></div>
+                    <div class="app-main">
+                        <div class="skeleton" style="height:14px;width:55%;margin-bottom:8px;"></div>
+                        <div class="skeleton" style="height:12px;width:40%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POST JOB PANEL -->
+        <div class="panel" id="panel-post">
+            <div class="api-error" id="post-error"></div>
+            <div class="post-card">
+                <div class="form-grid">
+                    <div class="form-group"><label class="form-label">Job Role / Title</label><input class="form-input"
+                            id="job-title" type="text" placeholder="e.g. SDE Intern" /></div>
+                    <div class="form-group"><label class="form-label">Department</label>
+                        <select class="form-select" id="job-dept">
+                            <option value="">Select department</option>
+                            <option>Engineering</option>
+                            <option>Data Science</option>
+                            <option>Product</option>
+                            <option>Design</option>
+                            <option>Marketing</option>
+                            <option>Operations</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Minimum CGPA</label><input class="form-input"
+                            id="job-cgpa" type="number" min="0" max="10" step="0.1" placeholder="e.g. 7.5" /></div>
+                    <div class="form-group"><label class="form-label">CTC / Stipend</label><input class="form-input"
+                            id="job-ctc" type="text" placeholder="e.g. ₹60,000/mo" /></div>
+                    <div class="form-group"><label class="form-label">Location</label><input class="form-input"
+                            id="job-location" type="text" placeholder="e.g. Bangalore / Remote" /></div>
+                    <div class="form-group"><label class="form-label">Job Type</label>
+                        <select class="form-select" id="job-type">
+                            <option>Internship</option>
+                            <option>Full-Time</option>
+                            <option>Part-Time</option>
+                            <option>Contract</option>
+                        </select>
+                    </div>
+                    <div class="form-group full"><label class="form-label">Job Description</label><textarea
+                            class="form-textarea" id="job-desc"
+                            placeholder="Describe the role, responsibilities, and what you're looking for…"></textarea>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Required Skills</label>
+                        <div class="skill-input-row">
+                            <input class="form-input" id="skill-inp" type="text"
+                                placeholder="Add a skill and press Enter"
+                                onkeydown="if(event.key==='Enter'){addSkill();event.preventDefault();}" />
+                            <button class="skill-add-btn" onclick="addSkill()">+ Add</button>
+                        </div>
+                        <div class="skills-tags" id="skills-tags"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label">Min. Resume Score</label><input class="form-input"
+                            id="job-minscore" type="number" min="0" max="100" placeholder="e.g. 60" /></div>
+                    <div class="form-group"><label class="form-label">Experience Required</label>
+                        <select class="form-select" id="job-exp">
+                            <option>Fresher (0 years)</option>
+                            <option>0–1 years</option>
+                            <option>1–2 years</option>
+                            <option>2+ years</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-error" id="post-form-err"></div>
+                <button class="post-btn" id="post-btn" onclick="postJob()">📤 Post Job Listing</button>
+            </div>
+        </div>
+
+        <!-- LISTINGS PANEL -->
+        <div class="panel" id="panel-listings">
+            <div class="api-error" id="listings-error"></div>
+            <div class="listings-list" id="listings-list">
+                <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.85rem;">Loading your listings…
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- APPLICANT DETAIL MODAL -->
+    <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-title">Applicant Profile</div>
+            <div class="modal-row">
+                <div class="form-group">
+                    <div class="form-label">Name</div>
+                    <div id="m-name"
+                        style="font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;padding:0.4rem 0;"></div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Email</div>
+                    <div id="m-email" style="font-size:0.85rem;color:var(--muted);padding:0.4rem 0;"></div>
+                </div>
+            </div>
+            <div class="modal-row">
+                <div class="form-group">
+                    <div class="form-label">Degree</div>
+                    <div id="m-degree" style="font-size:0.85rem;padding:0.4rem 0;"></div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Resume Score</div>
+                    <div id="m-score"
+                        style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--accent-g);padding:0.3rem 0;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-section">Skills</div>
+            <div class="modal-tags" id="m-skills"></div>
+            <div class="modal-section">CGPA</div>
+            <div id="m-cgpa" style="font-size:0.85rem;color:var(--accent);padding:0.2rem 0;"></div>
+            <div style="display:flex;gap:0.8rem;margin-top:1.5rem;">
+                <button
+                    style="flex:1;padding:0.75rem;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.25);border-radius:10px;color:var(--accent-g);font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;"
+                    onclick="actionApp('shortlist')">✅ Shortlist</button>
+                <button
+                    style="flex:1;padding:0.75rem;background:rgba(255,92,135,0.08);border:1px solid rgba(255,92,135,0.2);border-radius:10px;color:var(--accent3);font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;"
+                    onclick="actionApp('reject')">✕ Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <div class="tdot" id="tdot"></div><span id="tmsg"></span>
+    </div>
+
+    <script>
+        // ─── CONFIG ───
+        const API = 'http://localhost:8000';
+
+        // ─── AUTH GUARD ───
+        const token = localStorage.getItem('preplace_token');
+        const role = localStorage.getItem('preplace_role');
+        if (!token || role !== 'recruiter') {
+            window.location.href = 'landing.html';
+        }
+
+        function authHeaders() {
+            return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+        }
+        function signOut() {
+            localStorage.removeItem('preplace_token');
+            localStorage.removeItem('preplace_role');
+            localStorage.removeItem('preplace_user');
+            window.location.href = 'landing.html';
+        }
+        function toast(msg, color) {
+            document.getElementById('tdot').style.background = color || 'var(--accent)';
+            document.getElementById('tmsg').textContent = msg;
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3200);
+        }
+        function showErr(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.classList.add('show'); }
+        function hideErr(id) { document.getElementById(id).classList.remove('show'); }
+
+        // ─── TABS ───
+        function switchTab(id, el) {
+            ['applicants', 'post', 'listings'].forEach(p => {
+                document.getElementById('panel-' + p).classList.remove('active');
+                document.getElementById('tab-' + p).classList.remove('active');
+            });
+            document.getElementById('panel-' + id).classList.add('active');
+            el.classList.add('active');
+            if (id === 'listings') loadListings();
+        }
+
+        // ─── LOAD PROFILE ───
+        async function loadProfile() {
+            const stored = JSON.parse(localStorage.getItem('preplace_user') || '{}');
+            document.getElementById('p-company').textContent = stored.name || '—';
+            document.getElementById('header-company').textContent = stored.name || '';
+
+            // Fetch fresh from API
+            try {
+                // There's no /recruiter/profile endpoint yet — derive from stored JWT data
+                // We'll show what we have and update badge counts from real data
+            } catch (e) { }
+
+            // Load applicant count
+            loadApplicants();
+        }
+
+        // ─── LOAD APPLICANTS ───
+        let allApplicants = [];
+        let activeFilter = 'all';
+
+        async function loadApplicants() {
+            hideErr('apps-error');
+            try {
+                const res = await fetch(`${API}/recruiter/applicants`, { headers: authHeaders() });
+                if (res.status === 401) { signOut(); return; }
+                const data = await res.json();
+                allApplicants = Array.isArray(data) ? data : [];
+                document.getElementById('badge-apps').textContent = allApplicants.length;
+                renderApps();
+            } catch (err) {
+                showErr('apps-error', '❌ Could not load applicants. Check that the backend is running.');
+                allApplicants = MOCK_APPLICANTS;
+                document.getElementById('badge-apps').textContent = allApplicants.length;
+                renderApps();
+            }
+        }
+
+        // Mock fallback
+        const MOCK_APPLICANTS = [
+            { id: 'm1', name: 'Aman Verma', email: '23bcs012@smvdu.ac.in', degree: 'B.Tech CSE · 3rd Year', resume_score: 76, role: 'sde', skills: ['Python', 'React', 'Node.js'], cgpa: 8.4 },
+            { id: 'm2', name: 'Priya Sharma', email: '22bcs034@smvdu.ac.in', degree: 'B.Tech CSE · 4th Year', resume_score: 88, role: 'data', skills: ['Python', 'ML', 'TensorFlow'], cgpa: 9.1 },
+            { id: 'm3', name: 'Rahul Ranjan', email: '23bcs072@smvdu.ac.in', degree: 'B.Tech CSE · 3rd Year', resume_score: 82, role: 'sde', skills: ['Java', 'Spring Boot', 'MySQL'], cgpa: 8.7 },
+        ];
+
+        function filterApps(type, el) {
+            activeFilter = type;
+            document.querySelectorAll('#panel-applicants .fchip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderApps();
+        }
+
+        function scoreColor(s) { return s >= 80 ? 'var(--accent-g)' : s >= 65 ? '#f0b429' : 'var(--accent3)'; }
+
+        function renderApps() {
+            const q = document.getElementById('app-search').value.toLowerCase();
+            let list = allApplicants.filter(a => {
+                if (activeFilter !== 'all') {
+                    const skills = (a.extracted_skills || a.skills || []).join(' ').toLowerCase();
+                    if (!skills.includes(activeFilter)) return false;
+                }
+                return !q || a.name.toLowerCase().includes(q) || (a.email || '').toLowerCase().includes(q);
+            });
+            list = list.sort((a, b) => (b.resume_score || 0) - (a.resume_score || 0));
+
+            document.getElementById('app-list').innerHTML = list.length
+                ? list.map(a => {
+                    const score = a.resume_score || 0;
+                    const skills = a.extracted_skills || a.skills || [];
+                    return `
+        <div class="app-row">
+          <div class="app-avatar">👤</div>
+          <div class="app-main">
+            <div class="app-name">${a.name}</div>
+            <div class="app-meta">${a.degree || ''} ${a.cgpa ? '· CGPA ' + a.cgpa : ''}</div>
+            <div class="app-tags">${skills.slice(0, 5).map(s => `<span class="atag">${s}</span>`).join('')}</div>
+          </div>
+          <div class="app-right">
+            <div class="app-score" style="color:${scoreColor(score)}">${score > 0 ? score + '/100' : 'No resume'}</div>
+            <div class="app-score-bar"><div class="app-score-fill" style="width:${score}%;background:${scoreColor(score)}"></div></div>
+            <button class="view-btn" onclick='openModal(${JSON.stringify(a).replace(/'/g, "\\'")})'> View →</button>
+          </div>
+        </div>`;
+                }).join('')
+                : `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-txt">No applicants found for this filter.</div></div>`;
+        }
+
+        // ─── MODAL ───
+        let currentApplicant = null;
+        function openModal(a) {
+            currentApplicant = a;
+            document.getElementById('m-name').textContent = a.name;
+            document.getElementById('m-email').textContent = a.email || '';
+            document.getElementById('m-degree').textContent = a.degree || '';
+            document.getElementById('m-score').textContent = (a.resume_score || 0) + ' / 100';
+            document.getElementById('m-cgpa').textContent = a.cgpa ? a.cgpa + ' / 10' : 'Not provided';
+            const skills = a.extracted_skills || a.skills || [];
+            document.getElementById('m-skills').innerHTML = skills.map(s => `<span class="modal-tag">${s}</span>`).join('') || '<span style="color:var(--muted);font-size:0.8rem;">No skills listed</span>';
+            document.getElementById('modal').classList.add('open');
+        }
+        function closeModal() { document.getElementById('modal').classList.remove('open'); }
+        function closeModalOutside(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        function actionApp(action) {
+            const msg = action === 'shortlist' ? `✅ ${currentApplicant.name} shortlisted!` : `✕ ${currentApplicant.name} rejected.`;
+            const color = action === 'shortlist' ? 'var(--accent-g)' : 'var(--accent3)';
+            closeModal();
+            toast(msg, color);
+        }
+
+        // ─── SKILLS TAGS ───
+        let skillsList = [];
+        function addSkill() {
+            const inp = document.getElementById('skill-inp');
+            const v = inp.value.trim();
+            if (!v || skillsList.includes(v)) { inp.value = ''; return; }
+            skillsList.push(v);
+            inp.value = '';
+            renderSkillTags();
+        }
+        function removeSkill(s) { skillsList = skillsList.filter(x => x !== s); renderSkillTags(); }
+        function renderSkillTags() {
+            document.getElementById('skills-tags').innerHTML = skillsList.map(s =>
+                `<span class="skill-tag" onclick="removeSkill('${s}')">${s}<span class="rm">✕</span></span>`
+            ).join('');
+        }
+
+        // ─── POST JOB ───
+        async function postJob() {
+            const title = document.getElementById('job-title').value.trim();
+            const dept = document.getElementById('job-dept').value;
+            const ctc = document.getElementById('job-ctc').value.trim();
+            const loc = document.getElementById('job-location').value.trim();
+            const type = document.getElementById('job-type').value;
+            const cgpa = parseFloat(document.getElementById('job-cgpa').value) || 0;
+            const score = parseInt(document.getElementById('job-minscore').value) || 0;
+            const desc = document.getElementById('job-desc').value.trim();
+            const exp = document.getElementById('job-exp').value;
+            const errEl = document.getElementById('post-form-err');
+            errEl.classList.remove('show');
+
+            if (!title || !dept || !ctc || !loc) { errEl.textContent = 'Please fill all required fields.'; errEl.classList.add('show'); return; }
+
+            const btn = document.getElementById('post-btn');
+            btn.disabled = true; btn.textContent = '⏳ Posting…';
+
+            try {
+                const res = await fetch(`${API}/recruiter/jobs`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify({
+                        title, department: dept, job_type: type, location: loc,
+                        ctc, description: desc, required_skills: skillsList,
+                        min_cgpa: cgpa, min_resume_score: score, experience: exp
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) { errEl.textContent = data.detail || 'Failed to post job.'; errEl.classList.add('show'); return; }
+
+                // Reset form
+                ['job-title', 'job-ctc', 'job-location', 'job-cgpa', 'job-minscore', 'job-desc'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('job-dept').selectedIndex = 0;
+                document.getElementById('job-type').selectedIndex = 0;
+                skillsList = []; renderSkillTags();
+
+                toast('✅ Job listing posted!', 'var(--accent-g)');
+                switchTab('listings', document.getElementById('tab-listings'));
+
+            } catch (err) {
+                errEl.textContent = 'Cannot connect to server.';
+                errEl.classList.add('show');
+            } finally {
+                btn.disabled = false; btn.textContent = '📤 Post Job Listing';
+            }
+        }
+
+        // ─── LOAD LISTINGS ───
+        async function loadListings() {
+            hideErr('listings-error');
+            document.getElementById('listings-list').innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.85rem;">Loading…</div>';
+            try {
+                const res = await fetch(`${API}/recruiter/jobs`, { headers: authHeaders() });
+                if (res.status === 401) { signOut(); return; }
+                const data = await res.json();
+                document.getElementById('badge-listings').textContent = data.length || 0;
+                renderListings(Array.isArray(data) ? data : []);
+            } catch (err) {
+                showErr('listings-error', '❌ Could not load listings. Is the backend running?');
+                renderListings([]);
+            }
+        }
+
+        function renderListings(listings) {
+            if (!listings.length) {
+                document.getElementById('listings-list').innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-txt">No listings yet. Post your first job above.</div></div>`;
+                return;
+            }
+            document.getElementById('listings-list').innerHTML = listings.map(l => `
+    <div class="listing-card">
+      <div class="listing-top">
+        <div>
+          <div class="listing-role">${l.title || l.role || ''}</div>
+          <div class="listing-meta">${l.department || ''} · ${l.job_type || ''} · ${l.location || ''} · ${l.ctc || ''}</div>
+        </div>
+        <div class="listing-right">
+          <div class="listing-status ${l.status || 'active'}">${l.status === 'active' ? '🟢 Active' : '⚫ Closed'}</div>
+          <div class="listing-apps">${l.applicants_count || 0} applicant${(l.applicants_count || 0) !== 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      <div class="listing-tags">
+        ${(l.required_skills || []).map(s => `<span class="ltag">${s}</span>`).join('')}
+        <span class="ltag">Min CGPA: ${l.min_cgpa || 0}</span>
+        <span class="ltag">Min Score: ${l.min_resume_score || 0}</span>
+      </div>
+      <div class="listing-actions">
+        <button class="la-btn blue" onclick="switchTab('applicants',document.getElementById('tab-applicants'))">👥 View Applicants</button>
+        <button class="la-btn red" onclick="toggleClose('${l.id}', this)">${l.status === 'active' ? 'Close Listing' : 'Reopen'}</button>
+      </div>
+    </div>`).join('');
+        }
+
+        async function toggleClose(jobId, btn) {
+            const card = btn.closest('.listing-card');
+            const statusEl = card.querySelector('.listing-status');
+            const isActive = statusEl.classList.contains('active');
+            const newStatus = isActive ? 'closed' : 'active';
+
+            try {
+                await fetch(`${API}/recruiter/jobs/${jobId}/status?status=${newStatus}`, {
+                    method: 'PATCH', headers: authHeaders()
+                });
+                toast('Listing status updated.', 'var(--accent)');
+                loadListings();
+            } catch (err) {
+                toast('Failed to update status.', 'var(--accent3)');
+            }
+        }
+
+        // ─── INIT ───
+        loadProfile();
+    </script>
+</body>
+
+</html>
